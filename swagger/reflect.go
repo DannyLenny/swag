@@ -54,7 +54,9 @@ func inspect(t reflect.Type, jsonTag string) Property {
 
 	case reflect.Struct:
 		name := makeName(p.GoType)
-		p.Ref = makeRef(name)
+		if !strings.Contains(name, "timeTime") { //FIXME: DDD change to normal approach
+			p.Ref = makeRef(name)
+		}
 
 	case reflect.Ptr:
 		p.GoType = t.Elem()
@@ -168,6 +170,11 @@ func defineObject(v interface{}) Object {
 		}
 
 		p := inspect(field.Type, field.Tag.Get("json"))
+
+		p.Type = field.Tag.Get("type")
+		p.Format = field.Tag.Get("format")
+		p.Example = field.Tag.Get("example")
+
 		properties[name] = p
 	}
 
